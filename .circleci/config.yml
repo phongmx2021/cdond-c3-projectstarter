@@ -179,7 +179,7 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment:
-          workflow_Id 
+          workflow_Id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   # configure-infrastructure:
   #   docker:
