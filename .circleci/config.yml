@@ -7,7 +7,7 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      workflow_Id:
+      workflow_id:
         type: string
         # default: ${CIRCLE_WORKFLOW_ID}
     steps:
@@ -15,10 +15,10 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name udapeople-backend-<<parameters.workflow_Id>>
-            aws s3 rm s3://udapeople-<<parameters.workflow_Id>> --recursive
+            aws cloudformation delete-stack --stack-name udapeople-backend-<<parameters.workflow_id>>
+            aws s3 rm s3://udapeople-<<parameters.workflow_id>> --recursive
             aws cloudformation delete-stack \
-            --stack-name udapeople-frontend-<<parameters.workflow_Id>>
+            --stack-name udapeople-frontend-<<parameters.workflow_id>>
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
@@ -179,7 +179,7 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment:
-          workflow_Id: ${CIRCLE_WORKFLOW_ID:0:7}
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   configure-infrastructure:
     docker:
@@ -189,13 +189,15 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - 'ed:f4:d0:7d:79:1a:34:90:89:8e:1c:b3:1c:ed:12:a5'
-      - attach_workspace:
-          at: ~/
-
+     
       - run:
           name: Install dependencies
           command: |
             apk add --update --no-cache tar gzip ansible aws-cli
+
+      - attach_workspace:
+          at: ~/
+
       - run:
           name: Configure server
           command: |
@@ -213,8 +215,13 @@ jobs:
             cat backend/.env
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
+
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/backend            
       - destroy-environment:
-          workflow_Id: ${CIRCLE_WORKFLOW_ID:0:7}
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   run-migrations:
     docker:
@@ -245,7 +252,7 @@ jobs:
                 curl https://kvdb.io/VQwaFm1miyGBRc8L8WQR3G/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       - destroy-environment:
-          workflow_Id: ${CIRCLE_WORKFLOW_ID:0:7} 
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7} 
 
   # deploy-frontend:
   #   docker:
