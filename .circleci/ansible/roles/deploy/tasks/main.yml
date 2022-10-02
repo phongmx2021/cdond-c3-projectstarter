@@ -1,21 +1,14 @@
 ---
-- name: "update apt packages."
+- name: "download"
   become: true
-  apt:
-    update_cache: yes
-
-- name: "upgrade packages"
+  command: curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+  args:
+    chdir: /root
+- name: "upgrade"
   become: true
-  apt:
-    upgrade: yes
-
-- name: "install dependencies."
-  become: true
-  apt:
-    name: ["nodejs", "npm"]
-    state: latest
-    update_cache: yes
-
+  command: apt-get install -y nodejs
+  args:
+    chdir: /root
 - name: "install pm2"
   become: true
   npm:
