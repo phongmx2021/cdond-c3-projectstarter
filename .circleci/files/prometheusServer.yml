@@ -50,7 +50,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for my Web Server Instance
-      VpcId: !Ref VPC # vpc-0492b2b84bd1a3194
+      VpcId: !Ref VPC
       SecurityGroupIngress:
         - CidrIp:
             Ref: LocalIPAddress
