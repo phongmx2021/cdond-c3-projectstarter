@@ -4,15 +4,15 @@ Parameters:
   VPC:
     Description: Deploy the instance in this VPC
     Type: String
-    Default: vpc-0492b2b84bd1a3194
+    Default: vpc-0183e8bceac97c91a
   Subnet:
     Description: This subnet must already exist
     Type: String
-    Default: subnet-06241d056512881e6
+    Default: subnet-0eb824dfba44ad12d
   AZ:
     Description: Choose an AZ that corresponds to the Subnet in the !Subnet section
     Type: String
-    Default: us-west-2a
+    Default: us-west-2c
   KeyPair:
     Description: |
     Type: String
@@ -22,25 +22,24 @@ Parameters:
     Type: String
     Default: ami-0ee8244746ec5d6d4
   LocalIPAddress:
-    Description: This is your local IP address, it will be used to configure security group ingress
+    Description: Used to configure security group ingress
     Type: String
     Default: 0.0.0.0/0
   AuthEmail:
-    Description: This is the email (Gmail only!) you will use to authenticate the account
+    Description: Gmail use to authenticate the account
     Type: String
   EmailPassword:
     Description: |
       This is the app password for your gmail account.
     Type: String
   FromEmail:
-    Description: This is the email to send alerts from (usually same as AuthEmail)
+    Description: Use to send alerts from
     Type: String
   ToEmail:
     Description: The recipient email for alerts
     Type: String
 
 Resources:
-  # Security groups
   myWebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -88,7 +87,6 @@ Resources:
           IpProtocol: -1
           ToPort: -1
           Description: Allows outward communication on all ports
-  # INSTANCES
   prometheusInstance:
     Type: AWS::EC2::Instance
     Properties:
@@ -124,32 +122,32 @@ Resources:
           sudo mkdir /etc/prometheus
           sudo mkdir /var/lib/prometheus
           # Download Prometheus and copy to /usr/local/bin
-          wget https://github.com/prometheus/prometheus/releases/download/v2.0.0/prometheus-2.0.0.linux-amd64.tar.gz
-          tar xvf prometheus-2.0.0.linux-amd64.tar.gz
-          sudo cp prometheus-2.0.0.linux-amd64/prometheus /usr/local/bin/
-          sudo cp prometheus-2.0.0.linux-amd64/promtool /usr/local/bin/
+          wget https://github.com/prometheus/prometheus/releases/download/v2.39.1/prometheus-2.39.1.linux-amd64.tar.gz
+          tar xvf prometheus-2.39.1.linux-amd64.tar.gz
+          sudo cp prometheus-2.39.1.linux-amd64/prometheus /usr/local/bin/
+          sudo cp prometheus-2.39.1.linux-amd64/promtool /usr/local/bin/
           sudo chown prome:prome /usr/local/bin/prometheus
           sudo chown prome:prome /usr/local/bin/promtool
-          sudo cp -r prometheus-2.0.0.linux-amd64/consoles /etc/prometheus
-          sudo cp -r prometheus-2.0.0.linux-amd64/console_libraries /etc/prometheus
+          sudo cp -r prometheus-2.39.1.linux-amd64/consoles /etc/prometheus
+          sudo cp -r prometheus-2.39.1.linux-amd64/console_libraries /etc/prometheus
           sudo chown -R prome:prome /etc/prometheus/consoles
           sudo chown -R prome:prome /etc/prometheus/console_libraries
           sudo chown -R prome:prome /var/lib/prometheus
-          rm -rf prometheus-2.0.0.linux-amd64.tar.gz prometheus-2.0.0.linux-amd64
+          rm -rf prometheus-2.39.1.linux-amd64.tar.gz prometheus-2.39.1.linux-amd64
           # Install node exporter
-          wget https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
-          tar xzf node_exporter-1.0.1.linux-amd64.tar.gz
-          sudo cp node_exporter-1.0.1.linux-amd64/node_exporter /usr/local/bin/node_exporter
+          wget https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.4.0.linux-amd64.tar.gz
+          tar xzf node_exporter-1.4.0.linux-amd64.tar.gz
+          sudo cp node_exporter-1.4.0.linux-amd64/node_exporter /usr/local/bin/node_exporter
           sudo chown -R node_exporter:node_exporter /usr/local/bin/node_exporter
-          rm -rf node_exporter-1.0.1.linux-amd64.tar.gz node_exporter-1.0.1.linux-amd64
+          rm -rf node_exporter-1.4.0.linux-amd64.tar.gz node_exporter-1.4.0.linux-amd64
           # Install Alertmanager
-          wget https://github.com/prometheus/alertmanager/releases/download/v0.21.0/alertmanager-0.21.0.linux-amd64.tar.gz
-          tar xvfz alertmanager-0.21.0.linux-amd64.tar.gz
-          sudo cp alertmanager-0.21.0.linux-amd64/alertmanager /usr/local/bin/
-          sudo cp alertmanager-0.21.0.linux-amd64/amtool /usr/local/bin/
+          wget https://github.com/prometheus/alertmanager/releases/download/v0.24.0/alertmanager-0.24.0.linux-amd64.tar.gz
+          tar xvfz alertmanager-0.24.0.linux-amd64.tar.gz
+          sudo cp alertmanager-0.24.0.linux-amd64/alertmanager /usr/local/bin/
+          sudo cp alertmanager-0.24.0.linux-amd64/amtool /usr/local/bin/
           sudo mkdir /var/lib/alertmanager
 
-          rm -rf alertmanager-0.21.0.linux-amd64.tar.gz alertmanager-0.21.0.linux-amd64
+          rm -rf alertmanager-0.24.0.linux-amd64.tar.gz alertmanager-0.24.0.linux-amd64
 
           # Configure node exporter service
           sudo echo "[Unit]" >> /etc/systemd/system/node-exporter.service
