@@ -1,22 +1,18 @@
 Description: |
-  This template deploys prometheus in the VPC vpc-0bf2351bd7f57763e
-  To execute please run this:
-  aws cloudformation deploy --stack-name prometheus --template-file ${ThisFile.yml} --capabilities CAPABILITY_IAM \
-  --parameter-overrides AuthEmail=${YourGmailAddress} EmailPassword=${YourGmailPassword} FromEmail=${YourEmail} ToEmail=${AnyEmailDestination} \
-  VPC=${YourVPC} AZ=${YourAZ} Subnet=${YourSubnet}
+  This template deploys prometheus
 Parameters:
   VPC:
     Description: Deploy the instance in this VPC
     Type: String
-    Default: vpc-0bf2351bd7f57763e 
+    Default: vpc-0492b2b84bd1a3194
   Subnet:
     Description: This subnet must already exist
     Type: String
-    Default: subnet-0565c8bb46c156a2a
+    Default: subnet-06241d056512881e6
   AZ:
     Description: Choose an AZ that corresponds to the Subnet in the !Subnet section
     Type: String
-    Default: us-west-2b
+    Default: us-west-2a
   KeyPair:
     Description: |
     Type: String
@@ -24,7 +20,7 @@ Parameters:
   Image:
     Description: |
     Type: String
-    Default: ami-08e2d37b6a0129927
+    Default: ami-0ee8244746ec5d6d4
   LocalIPAddress:
     Description: This is your local IP address, it will be used to configure security group ingress
     Type: String
@@ -35,7 +31,6 @@ Parameters:
   EmailPassword:
     Description: |
       This is the app password for your gmail account.
-      Get one here https://support.google.com/accounts/answer/185833?hl=en
     Type: String
   FromEmail:
     Description: This is the email to send alerts from (usually same as AuthEmail)
@@ -99,12 +94,12 @@ Resources:
     Properties:
       ImageId: !Ref Image
       InstanceType: t2.micro
-      AvailabilityZone: !Ref AZ # !Select [0, !GetAZs ] # You can manually set an availability zone
-      KeyName: !Ref KeyPair # udacity # Created with `aws ec2 create-key-pair --key-name udacity >> udacity.pem`
+      AvailabilityZone: !Ref AZ
+      KeyName: !Ref KeyPair 
       NetworkInterfaces:
         - DeviceIndex: 0
           AssociatePublicIpAddress: true
-          SubnetId: !Ref Subnet #subnet-0598050965729f2e9
+          SubnetId: !Ref Subnet
           GroupSet:
             - !Ref myWebServerSecurityGroup
       BlockDeviceMappings:
