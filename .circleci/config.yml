@@ -364,14 +364,27 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip -qq awscliv2.zip
             sudo ./aws/install
+
+      - run:
+          name: Install dependencies
+          command: |
+            export OldWorkflowID=$(aws cloudformation \
+                      list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+                      --no-paginate --output text)
+            echo "Old Wokflow ID: $OldWorkflowID"
+            echo "${OldWorkflowID}" > oldWorkFlow.txt
+            cat oldWorkFlow.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/oldWorkFlow.txt
+      - save_cache:
+          paths: [oldWorkFlow.txt]
+          key: oldWorkFlowId-{{ checksum "package-lock.json" }}
+
       - run:
           name: Update cloudfront distribution
           command: |
-            export OldWorkflowID=$(aws cloudformation list-exports \
-            --query "Exports[?Name==\`WorkflowID\`].Value" \
-            --no-paginate --output text)
-            echo OldWorkflowID: "${OldWorkflowID}"
-
             aws cloudformation deploy \
             --template-file .circleci/files/cloudfront.yml \
             --stack-name InitialStack \
@@ -389,8 +402,8 @@ jobs:
       - run:
           name: Get old stack workflow id and remove stacks
           command: |
-            export OldWorkflowID=$(OldWorkflowID)
-            echo "OldWorkflowID: $OldWorkflowID"
+            export OldWorkflowID=$(cat oldWorkFlow.txt)     
+            echo "Old Wokflow ID: $OldWorkflowID"
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
             # Fetch the stack names          
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
