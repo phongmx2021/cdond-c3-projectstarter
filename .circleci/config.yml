@@ -365,6 +365,8 @@ jobs:
             unzip -qq awscliv2.zip
             sudo ./aws/install
 
+      - run: mkdir -p workspace
+
       - run:
           name: Install dependencies
           command: |
@@ -372,12 +374,12 @@ jobs:
                       list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
                       --no-paginate --output text)
             echo "Old Wokflow ID: $OldWorkflowID"
-            echo "${OldWorkflowID}" > oldWorkFlow.txt
+            echo "${OldWorkflowID}" > workspace/echo-output
             cat oldWorkFlow.txt
       - persist_to_workspace:
-          root: ~/
+          root: workspace
           paths:
-            - project/oldWorkFlow.txt
+            - echo-output
 
       - run:
           name: Update cloudfront distribution
@@ -396,18 +398,14 @@ jobs:
       - image: python:3.7-alpine3.16
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update curl
-            pip install awscli
+      
       - attach_workspace:
-          at: ~/
+          at: /workspace
 
       - run:
           name: Get old stack workflow id and remove stacks
           command: |
-            export OldWorkflowID=$(cat oldWorkFlow.txt)     
+            export OldWorkflowID=$(cat workspace/echo-output)     
             echo "Old Wokflow ID: $OldWorkflowID"
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
             # Fetch the stack names          
