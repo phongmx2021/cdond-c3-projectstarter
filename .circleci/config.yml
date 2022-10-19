@@ -399,8 +399,14 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update curl
+            pip install awscli
       - attach_workspace:
           at: ~/
+
       - run:
           name: Get old stack workflow id and remove stacks
           command: |
