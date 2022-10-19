@@ -378,9 +378,6 @@ jobs:
           root: ~/
           paths:
             - project/oldWorkFlow.txt
-      - save_cache:
-          paths: [oldWorkFlow.txt]
-          key: oldWorkFlowId-{{ checksum "package-lock.json" }}
 
       - run:
           name: Update cloudfront distribution
@@ -396,7 +393,7 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
   cleanup:
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.7-alpine3.16
     steps:
       - checkout
       - run:
