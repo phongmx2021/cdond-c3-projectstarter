@@ -365,20 +365,16 @@ jobs:
             unzip -qq awscliv2.zip
             sudo ./aws/install
 
-      - run: mkdir -p workspace
-
       - run:
-          name: Install dependencies
+          name: save old Id
           command: |
-            export OldWorkflowID=$(aws cloudformation \
+            echo $(aws cloudformation \
                       list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                      --no-paginate --output text)
-            echo "Old Wokflow ID: $OldWorkflowID"
-            echo "${OldWorkflowID}" > workspace/echo-output
+                      --no-paginate --output text) >> ~/project/oldId.txt
       - persist_to_workspace:
-          root: workspace
+          root: ~/
           paths:
-            - echo-output
+            - project/oldId.txt
 
       - run:
           name: Update cloudfront distribution
@@ -399,12 +395,12 @@ jobs:
       - checkout
 
       - attach_workspace:
-          at: /workspace
+          at: ~/
 
       - run:
           name: Get old stack workflow id and remove stacks
           command: |
-            export OldWorkflowID=$(cat workspace/echo-output)     
+            export OldWorkflowID=$(cat ~/project/oldId.txt)     
             echo "Old Wokflow ID: $OldWorkflowID"
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
             # Fetch the stack names          
