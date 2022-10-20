@@ -249,6 +249,8 @@ jobs:
             if grep -q "has been executed successfully." ~/project/backend/migrations.txt
             then
                 curl https://kvdb.io/75strisMPk26Ht8FfFM2W3/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+            else
+              echo not thing to migration
             fi
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7} 
