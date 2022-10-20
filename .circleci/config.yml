@@ -29,7 +29,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS = $(curl --insecure  https://kvdb.io/VQwaFm1miyGBRc8L8WQR3G/migration_${CIRCLE_WORKFLOW_ID:0:7})
+            SUCCESS = $(curl --insecure  https://kvdb.io/QHYR8DQDtYNjqi7Rhf3zWL/migration_${CIRCLE_WORKFLOW_ID:0:7})
             if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
@@ -247,7 +247,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations.txt
             then
-                curl https://kvdb.io/VQwaFm1miyGBRc8L8WQR3G/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+                curl https://kvdb.io/QHYR8DQDtYNjqi7Rhf3zWL/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7} 
@@ -414,7 +414,7 @@ jobs:
             #         --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
             # echo Stack names: "${STACKS[@]}"     
 
-            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
+            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ] && [[ "${OldWorkflowID}" != ""]]]
             then
               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
