@@ -36,7 +36,7 @@ commands:
             if curl ${URL} | grep "1"; then
               cd ~/project/backend
               npm install
-              npm run migration:revert
+              npm run migrations:revert
             fi
             
   notify_slack_error:
