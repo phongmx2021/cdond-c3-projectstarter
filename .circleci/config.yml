@@ -33,16 +33,10 @@ commands:
 
             export URL="https://kvdb.io/75strisMPk26Ht8FfFM2W3/migration_${CIRCLE_WORKFLOW_ID:0:7}"            
             echo $URL
-            if curl ${URL} | grep "1"; then echo OK 1; else echo not Ok; fi
-
-            export SUCCESS=$(curl --insecure  https://kvdb.io/75strisMPk26Ht8FfFM2W3/migration_${CIRCLE_WORKFLOW_ID:0:7})           
-            echo $SUCCESS
-            if(( $SUCCESS==1 )); 
-            then
+            if curl ${URL} | grep "1"; then
               cd ~/project/backend
               npm install
               npm run migration:revert
-              
             fi
             
   notify_slack_error:
