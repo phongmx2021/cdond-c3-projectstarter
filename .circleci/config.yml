@@ -38,6 +38,7 @@ commands:
               npm install
               npm audit fix --force
               npm run migrations:revert
+              echo revert done
             fi
             
   notify_slack_error:
