@@ -36,6 +36,8 @@ commands:
             if curl ${URL} | grep "1"; then
               cd ~/project/backend
               npm install
+              npm audit fix --audit-level=critical --force
+              npm audit --audit-level=critical
               npm run migrations:revert
             fi
             
