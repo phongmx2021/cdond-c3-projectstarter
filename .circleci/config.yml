@@ -36,7 +36,7 @@ commands:
             if curl ${URL} | grep "1"; then
               cd ~/project/backend
               npm install
-              npm audit fix --force
+              npm run build
               npm run migrations:revert
               echo revert done
             fi
