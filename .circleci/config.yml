@@ -24,11 +24,14 @@ commands:
     parameters:
       workflow_id:
         type: string
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
     steps:
       - run:
           name: Revert migrations
           when: on_fail
           command: |
+            echo " param <<parameters.workflow_id>>"
+            echo " result $(curl --insecure  https://kvdb.io/75strisMPk26Ht8FfFM2W3/migration_<<parameters.workflow_id>>)"
             SUCCESS = $(curl --insecure  https://kvdb.io/75strisMPk26Ht8FfFM2W3/migration_<<parameters.workflow_id>>)
             if(( $SUCCESS==1 )); 
             then
